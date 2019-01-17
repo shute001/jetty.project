@@ -18,12 +18,6 @@
 
 package org.eclipse.jetty.osgi.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +34,12 @@ import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 /**
  * Pax-Exam to make sure the jetty-osgi-boot can be started along with the
@@ -61,20 +61,21 @@ public class TestJettyOSGiBootWithAnnotations
         ArrayList<Option> options = new ArrayList<>();
         options.add(CoreOptions.junitBundles());
         options.addAll(TestOSGiUtil.configureJettyHomeAndPort(false, "jetty-http-boot-with-annotations.xml"));
-        options.add(CoreOptions.bootDelegationPackages("org.xml.sax", "org.xml.*", "org.w3c.*", "javax.sql.*","javax.xml.*", "javax.activation.*"));
-        options.add(CoreOptions.systemPackages("com.sun.org.apache.xalan.internal.res","com.sun.org.apache.xml.internal.utils",
+        options.add(CoreOptions.bootDelegationPackages("org.xml.sax", "org.xml.*", "org.w3c.*", "javax.sql.*", "javax.xml.*", "javax.activation.*"));
+        options.add(CoreOptions.systemPackages("com.sun.org.apache.xalan.internal.res", "com.sun.org.apache.xml.internal.utils",
                                                "com.sun.org.apache.xml.internal.utils", "com.sun.org.apache.xpath.internal",
                                                "com.sun.org.apache.xpath.internal.jaxp", "com.sun.org.apache.xpath.internal.objects"));
      
         options.addAll(TestOSGiUtil.coreJettyDependencies());
+        options.add(mavenBundle().groupId("org.eclipse.jetty").artifactId("jetty-alpn-java-client").versionAsInProject().start());
+        options.add(mavenBundle().groupId("org.eclipse.jetty").artifactId("jetty-alpn-client").versionAsInProject().start());
         options.add(systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value(LOG_LEVEL));
         options.add(systemProperty("org.eclipse.jetty.LEVEL").value(LOG_LEVEL));
         options.addAll(jspDependencies());
         options.addAll(annotationDependencies());
         options.add(mavenBundle().groupId("org.eclipse.jetty.osgi").artifactId("test-jetty-osgi-fragment").versionAsInProject().noStart());
-        return options.toArray(new Option[options.size()]);
+        return options.toArray(new Option[0]);
     }
-
 
     public static List<Option> jspDependencies()
     {
@@ -84,8 +85,8 @@ public class TestJettyOSGiBootWithAnnotations
     public static List<Option> annotationDependencies()
     {
         List<Option> res = new ArrayList<>();
-        res.add(mavenBundle().groupId( "com.sun.activation" ).artifactId( "javax.activation" ).version( "1.2.0" ).noStart());
-        res.add(mavenBundle().groupId( "org.eclipse.jetty.orbit" ).artifactId( "javax.mail.glassfish" ).version( "1.4.1.v201005082020" ).noStart());
+        res.add(mavenBundle().groupId("com.sun.activation").artifactId("javax.activation").version("1.2.0").noStart());
+        res.add(mavenBundle().groupId("org.eclipse.jetty.orbit").artifactId("javax.mail.glassfish").version("1.4.1.v201005082020").noStart());
         res.add(mavenBundle().groupId("org.eclipse.jetty.tests").artifactId("test-container-initializer").versionAsInProject());
         res.add(mavenBundle().groupId("org.eclipse.jetty.tests").artifactId("test-mock-resources").versionAsInProject());
         //test webapp bundle
@@ -93,22 +94,18 @@ public class TestJettyOSGiBootWithAnnotations
         return res;
     }
 
-
     public void assertAllBundlesActiveOrResolved()
     {
         TestOSGiUtil.debugBundles(bundleContext);
         TestOSGiUtil.assertAllBundlesActiveOrResolved(bundleContext);
     }
 
-
-
     @Test
     public void testIndex() throws Exception
     {
-
         if (Boolean.getBoolean(TestOSGiUtil.BUNDLE_DEBUG))
             assertAllBundlesActiveOrResolved();
-
+            
         HttpClient client = new HttpClient();
         try
         {
@@ -136,5 +133,4 @@ public class TestJettyOSGiBootWithAnnotations
             client.stop();
         }
     }
-
 }

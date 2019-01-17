@@ -18,12 +18,6 @@
 
 package org.eclipse.jetty.osgi.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +35,12 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 /**
  * TestJettyOSGiBootWebAppAsService
@@ -73,14 +73,15 @@ public class TestJettyOSGiBootWebAppAsService
                                                "com.sun.org.apache.xpath.internal.jaxp", "com.sun.org.apache.xpath.internal.objects"));
 
         options.addAll(TestOSGiUtil.coreJettyDependencies());
+        options.add(mavenBundle().groupId("org.eclipse.jetty").artifactId("jetty-alpn-java-client").versionAsInProject().start());
+        options.add(mavenBundle().groupId("org.eclipse.jetty").artifactId("jetty-alpn-client").versionAsInProject().start());
         options.add(systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value(LOG_LEVEL));
         options.add(systemProperty("org.eclipse.jetty.LEVEL").value(LOG_LEVEL));
 
         options.addAll(TestOSGiUtil.jspDependencies());
         options.addAll(testDependencies());
-        return options.toArray(new Option[options.size()]);
+        return options.toArray(new Option[0]);
     }
-
 
     public static List<Option> testDependencies()
     {
@@ -96,23 +97,18 @@ public class TestJettyOSGiBootWebAppAsService
         return res;
     }
 
-
     public void assertAllBundlesActiveOrResolved()
     {
         TestOSGiUtil.debugBundles(bundleContext);
         TestOSGiUtil.assertAllBundlesActiveOrResolved(bundleContext);
     }
 
-
-
     @Test
     public void testBundle() throws Exception
     {
-        
         if (Boolean.getBoolean(TestOSGiUtil.BUNDLE_DEBUG))
             assertAllBundlesActiveOrResolved();
-        
-        
+
         // now test getting a static file
         HttpClient client = new HttpClient();
         try
@@ -124,12 +120,12 @@ public class TestJettyOSGiBootWebAppAsService
             ContentResponse response = client.GET("http://127.0.0.1:" + port + "/acme/index.html");
             assertEquals(HttpStatus.OK_200, response.getStatus());
             String content = response.getContentAsString();
-            assertTrue(content.indexOf("<h1>Test OSGi WebAppA</h1>") != -1);
+            assertTrue(content.contains("<h1>Test OSGi WebAppA</h1>"));
 
             response = client.GET("http://127.0.0.1:" + port + "/acme/mime");
             assertEquals(HttpStatus.OK_200, response.getStatus());
             content = response.getContentAsString();
-            assertTrue(content.indexOf("MIMETYPE=application/gzip") != -1);
+            assertTrue(content.contains("MIMETYPE=application/gzip"));
 
             port = System.getProperty("bundle.server.port");
             assertNotNull(port);
@@ -137,7 +133,7 @@ public class TestJettyOSGiBootWebAppAsService
             response = client.GET("http://127.0.0.1:" + port + "/acme/index.html");
             assertEquals(HttpStatus.OK_200, response.getStatus());
             content = response.getContentAsString();
-            assertTrue(content.indexOf("<h1>Test OSGi WebAppB</h1>") != -1);
+            assertTrue(content.contains("<h1>Test OSGi WebAppB</h1>"));
         }
         finally
         {
