@@ -34,7 +34,6 @@ import java.util.jar.JarFile;
 import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.osgi.boot.utils.BundleClassLoaderHelperFactory;
-import org.eclipse.jetty.util.IntrospectionUtil;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
@@ -297,7 +296,7 @@ public class OSGiWebappClassLoader extends WebAppClassLoader implements BundleRe
             if (_contextField == null)
             {
                 _contextField = WebAppClassLoader.class.getDeclaredField("_context");
-                IntrospectionUtil.makeAccessible( _contextField, true );
+                _contextField.setAccessible(true);
             }
             _contextField.set(this, webappContext);
             if (webappContext.getExtraClasspath() != null)

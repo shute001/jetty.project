@@ -33,7 +33,6 @@ import org.eclipse.jetty.annotations.ResourcesAnnotationHandler;
 import org.eclipse.jetty.plus.annotation.Injection;
 import org.eclipse.jetty.plus.annotation.InjectionCollection;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.IntrospectionUtil;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -131,22 +130,22 @@ public class TestResourceAnnotations
 
         //check injected values
         Field f = ResourceB.class.getDeclaredField ("f");
-        IntrospectionUtil.makeAccessible( f, true );
+        f.setAccessible(true);
         assertEquals(objB , f.get(binst));
 
         //@Resource(mappedName="resA") //test the default naming scheme but using a mapped name from the environment
         f = ResourceA.class.getDeclaredField("g");
-        IntrospectionUtil.makeAccessible( f, true );
+        f.setAccessible(true);
         assertEquals(objA, f.get(binst));
 
         //@Resource(name="resA") //test using the given name as the name from the environment
         f = ResourceA.class.getDeclaredField("j");
-        IntrospectionUtil.makeAccessible( f, true );
+        f.setAccessible(true);
         assertEquals(objA, f.get(binst));
 
         //@Resource(mappedName="resB") //test using the default name on an inherited field
         f = ResourceA.class.getDeclaredField("n");
-        IntrospectionUtil.makeAccessible( f, true );
+        f.setAccessible(true);
         assertEquals(objB, f.get(binst));
     }
 

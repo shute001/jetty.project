@@ -18,7 +18,6 @@
 
 package org.eclipse.jetty.util;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -81,15 +80,7 @@ public class IntrospectionUtil
     }
     
     
-    public static boolean makeAccessible( AccessibleObject accessibleObject, boolean accessible)
-    {
-        return accessibleObject.trySetAccessible();
-    }
-
-    public static boolean isAccessible(Object instance, AccessibleObject accessibleObject)
-    {
-        return accessibleObject.canAccess( instance );
-    }
+    
     
 
     public static Field findField (Class<?> clazz, String targetName, Class<?> targetType, boolean checkInheritance, boolean strictType)
