@@ -112,10 +112,10 @@ public abstract class LifeCycleCallback
 
         if (_target != null)
         {
-            boolean accessibility = getTarget().isAccessible();
-            getTarget().setAccessible(true);
+            boolean accessibility = IntrospectionUtil.isAccessible( instance, getTarget());
+            IntrospectionUtil.makeAccessible( getTarget(), true );
             getTarget().invoke(instance, __EMPTY_ARGS);
-            getTarget().setAccessible(accessibility);
+            if(!accessibility) IntrospectionUtil.makeAccessible( getTarget(), false );
         }
     }
 

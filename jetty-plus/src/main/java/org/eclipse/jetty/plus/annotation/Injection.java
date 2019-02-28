@@ -206,10 +206,11 @@ public class Injection
     {
         try
         {
-            boolean accessibility = field.isAccessible();
-            field.setAccessible(true);
+            boolean accessibility = IntrospectionUtil.isAccessible(injectable, field);
+            IntrospectionUtil.makeAccessible( field, true );
             field.set(injectable, lookupInjectedValue());
-            field.setAccessible(accessibility);
+            if(!accessibility)
+                IntrospectionUtil.makeAccessible( field, accessibility );
         }
         catch (Exception e)
         {
@@ -227,10 +228,11 @@ public class Injection
     {
         try
         {
-            boolean accessibility = method.isAccessible();
-            method.setAccessible(true);
+            boolean accessibility = IntrospectionUtil.isAccessible( injectable, method );
+            IntrospectionUtil.makeAccessible( method,true);
             method.invoke(injectable, new Object[] {lookupInjectedValue()});
-            method.setAccessible(accessibility);
+            if(!accessibility)
+                IntrospectionUtil.makeAccessible( method, accessibility );
         }
         catch (Exception e)
         {

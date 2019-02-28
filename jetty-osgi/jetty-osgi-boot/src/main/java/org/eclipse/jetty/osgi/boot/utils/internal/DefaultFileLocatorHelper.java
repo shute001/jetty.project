@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipFile;
 
 import org.eclipse.jetty.osgi.boot.utils.BundleFileLocatorHelper;
+import org.eclipse.jetty.util.IntrospectionUtil;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.resource.PathResource;
 import org.eclipse.jetty.util.resource.Resource;
@@ -119,7 +120,7 @@ public class DefaultFileLocatorHelper implements BundleFileLocatorHelper
             if (BUNDLE_ENTRY_FIELD == null)
             {
                 BUNDLE_ENTRY_FIELD = con.getClass().getDeclaredField("bundleEntry");
-                BUNDLE_ENTRY_FIELD.setAccessible(true);
+                IntrospectionUtil.makeAccessible( BUNDLE_ENTRY_FIELD, true );
             }
             Object bundleEntry = BUNDLE_ENTRY_FIELD.get(con);
            
@@ -128,7 +129,7 @@ public class DefaultFileLocatorHelper implements BundleFileLocatorHelper
                 if (FILE_FIELD == null)
                 {
                     FILE_FIELD = bundleEntry.getClass().getDeclaredField("file");
-                    FILE_FIELD.setAccessible(true);
+                    IntrospectionUtil.makeAccessible( FILE_FIELD, true );
                 }
                 File f = (File) FILE_FIELD.get(bundleEntry);
                 return f.getParentFile().getParentFile().getCanonicalFile();
@@ -143,19 +144,19 @@ public class DefaultFileLocatorHelper implements BundleFileLocatorHelper
                 if (BUNDLE_ENTRY_FIELD == null)
                 {// this one will be a DirZipBundleEntry
                     BUNDLE_ENTRY_FIELD = con.getClass().getDeclaredField("bundleEntry");
-                    BUNDLE_ENTRY_FIELD.setAccessible(true);
+                    IntrospectionUtil.makeAccessible( BUNDLE_ENTRY_FIELD, true );
                 }
                 bundleEntry = BUNDLE_ENTRY_FIELD.get(con);
                 if (BUNDLE_FILE_FIELD_FOR_DIR_ZIP_BUNDLE_ENTRY == null)
                 {
                     BUNDLE_FILE_FIELD_FOR_DIR_ZIP_BUNDLE_ENTRY = bundleEntry.getClass().getDeclaredField("bundleFile");
-                    BUNDLE_FILE_FIELD_FOR_DIR_ZIP_BUNDLE_ENTRY.setAccessible(true);
+                    IntrospectionUtil.makeAccessible( BUNDLE_FILE_FIELD_FOR_DIR_ZIP_BUNDLE_ENTRY, true );
                 }
                 Object zipBundleFile = BUNDLE_FILE_FIELD_FOR_DIR_ZIP_BUNDLE_ENTRY.get(bundleEntry);
                 if (ZIP_FILE_FILED_FOR_ZIP_BUNDLE_FILE == null)
                 {
                     ZIP_FILE_FILED_FOR_ZIP_BUNDLE_FILE = zipBundleFile.getClass().getDeclaredField("zipFile");
-                    ZIP_FILE_FILED_FOR_ZIP_BUNDLE_FILE.setAccessible(true);
+                    IntrospectionUtil.makeAccessible( ZIP_FILE_FILED_FOR_ZIP_BUNDLE_FILE, true );
                 }
                 ZipFile zipFile = (ZipFile) ZIP_FILE_FILED_FOR_ZIP_BUNDLE_FILE.get(zipBundleFile);
                 return new File(zipFile.getName());
@@ -333,7 +334,7 @@ public class DefaultFileLocatorHelper implements BundleFileLocatorHelper
             if (BUNDLE_URL_CONNECTION_getLocalURL == null && match(conn.getClass().getName(), BUNDLE_URL_CONNECTION_CLASSES))
             {
                 BUNDLE_URL_CONNECTION_getLocalURL = conn.getClass().getMethod("getLocalURL");
-                BUNDLE_URL_CONNECTION_getLocalURL.setAccessible(true);
+                IntrospectionUtil.makeAccessible( BUNDLE_URL_CONNECTION_getLocalURL, true );
             }
             if (BUNDLE_URL_CONNECTION_getLocalURL != null) { return (URL) BUNDLE_URL_CONNECTION_getLocalURL.invoke(conn); }
         }
@@ -367,7 +368,7 @@ public class DefaultFileLocatorHelper implements BundleFileLocatorHelper
                 match (conn.getClass().getName(), BUNDLE_URL_CONNECTION_CLASSES))
             {
                 BUNDLE_URL_CONNECTION_getFileURL = conn.getClass().getMethod("getFileURL");
-                BUNDLE_URL_CONNECTION_getFileURL.setAccessible(true);
+                IntrospectionUtil.makeAccessible(BUNDLE_URL_CONNECTION_getFileURL, true);
             }
             if (BUNDLE_URL_CONNECTION_getFileURL != null) { return (URL) BUNDLE_URL_CONNECTION_getFileURL.invoke(conn); }
 

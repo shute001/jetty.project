@@ -18,6 +18,8 @@
 
 package org.eclipse.jetty.webapp;
 
+import org.eclipse.jetty.util.IntrospectionUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -33,7 +35,7 @@ public final class URLStreamHandlerUtil
         {
             // First, reset the factory field
             Field factoryField = getURLStreamHandlerFactoryField();
-            factoryField.setAccessible(true);
+            IntrospectionUtil.makeAccessible( factoryField, true );
             factoryField.set(null, null);
             
             if(factory != null)
@@ -54,7 +56,7 @@ public final class URLStreamHandlerUtil
         {
             // First, reset the factory field
             Field factoryField = getURLStreamHandlerFactoryField();
-            factoryField.setAccessible(true);
+            IntrospectionUtil.makeAccessible( factoryField, true );
             return (URLStreamHandlerFactory) factoryField.get(null);
         }
         catch(Throwable ignore)

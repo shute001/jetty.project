@@ -30,6 +30,7 @@ import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.io.ssl.ALPNProcessor;
 import org.eclipse.jetty.io.ssl.SslConnection;
 import org.eclipse.jetty.io.ssl.SslHandshakeListener;
+import org.eclipse.jetty.util.IntrospectionUtil;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
@@ -60,7 +61,7 @@ public class ConscryptClientALPNProcessor implements ALPNProcessor.Client
         try
         {
             Method setAlpnProtocols = sslEngine.getClass().getDeclaredMethod("setApplicationProtocols", String[].class);
-            setAlpnProtocols.setAccessible(true);
+            IntrospectionUtil.makeAccessible( setAlpnProtocols, true );
             ALPNClientConnection alpn = (ALPNClientConnection)connection;
             String[] protocols = alpn.getProtocols().toArray(new String[0]);
             setAlpnProtocols.invoke(sslEngine, (Object)protocols);
@@ -93,7 +94,7 @@ public class ConscryptClientALPNProcessor implements ALPNProcessor.Client
             {
                 SSLEngine sslEngine = alpnConnection.getSSLEngine();
                 Method method = sslEngine.getClass().getDeclaredMethod("getApplicationProtocol");
-                method.setAccessible(true);
+                IntrospectionUtil.makeAccessible( method, true );
                 String protocol = (String)method.invoke(sslEngine);
                 alpnConnection.selected(protocol);
             }

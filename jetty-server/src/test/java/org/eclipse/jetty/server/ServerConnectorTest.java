@@ -56,6 +56,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.IO;
+import org.eclipse.jetty.util.IntrospectionUtil;
 import org.eclipse.jetty.util.log.StacklessLogging;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -82,7 +83,7 @@ public class ServerConnectorTest
             {
                 Field fld = connector.getClass().getDeclaredField("_reuseAddress");
                 assertThat("Field[_reuseAddress]",fld,notNullValue());
-                fld.setAccessible(true);
+                IntrospectionUtil.makeAccessible( fld, true );
                 Object val = fld.get(connector);
                 out.printf("connector._reuseAddress() = %b%n",val);
             }

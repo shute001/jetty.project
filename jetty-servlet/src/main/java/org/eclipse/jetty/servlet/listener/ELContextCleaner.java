@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.eclipse.jetty.util.IntrospectionUtil;
 import org.eclipse.jetty.util.Loader;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
@@ -98,8 +99,8 @@ public class ELContextCleaner implements ServletContextListener
         if (properties == null)
             return;
 
-        if (!properties.isAccessible())
-            properties.setAccessible(true);
+        if (!IntrospectionUtil.isAccessible(null, properties))
+            IntrospectionUtil.makeAccessible( properties, true );
 
         Map map = (Map) properties.get(null);
         if (map == null)
