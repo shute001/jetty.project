@@ -60,9 +60,7 @@ public class ConscryptServerALPNProcessor implements ALPNProcessor.Server
     {
         try
         {
-            Method method = sslEngine.getClass().getMethod("setHandshakeApplicationProtocolSelector", BiFunction.class);
-            method.setAccessible(true);
-            method.invoke(sslEngine,new ALPNCallback((ALPNServerConnection)connection));
+            sslEngine.setHandshakeApplicationProtocolSelector(new ALPNCallback((ALPNServerConnection)connection));
         }
         catch (RuntimeException x)
         {
