@@ -18,6 +18,7 @@
 
 package org.eclipse.jetty.alpn.conscrypt.client;
 
+import org.conscrypt.Conscrypt;
 import org.conscrypt.OpenSSLProvider;
 import org.eclipse.jetty.alpn.client.ALPNClientConnection;
 import org.eclipse.jetty.io.Connection;
@@ -28,7 +29,6 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
 import javax.net.ssl.SSLEngine;
-import java.lang.reflect.Method;
 import java.security.Security;
 
 public class ConscryptClientALPNProcessor implements ALPNProcessor.Client
@@ -57,11 +57,9 @@ public class ConscryptClientALPNProcessor implements ALPNProcessor.Client
     {
         try
         {
-            Method setAlpnProtocols = sslEngine.getClass().getDeclaredMethod("setApplicationProtocols", String[].class);
-            setAlpnProtocols.setAccessible(true);
             ALPNClientConnection alpn = (ALPNClientConnection)connection;
             String[] protocols = alpn.getProtocols().toArray(new String[0]);
-            setAlpnProtocols.invoke(sslEngine, (Object)protocols);
+            Conscrypt.setApplicationProtocols( sslEngine, protocols );
             ((SslConnection.DecryptedEndPoint)connection.getEndPoint()).getSslConnection()
                     .addHandshakeListener(new ALPNListener(alpn));
         }
