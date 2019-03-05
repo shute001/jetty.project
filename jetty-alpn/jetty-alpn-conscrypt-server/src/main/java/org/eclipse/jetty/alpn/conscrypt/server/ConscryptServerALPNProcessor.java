@@ -18,13 +18,6 @@
 
 package org.eclipse.jetty.alpn.conscrypt.server;
 
-import java.lang.reflect.Method;
-import java.security.Security;
-import java.util.List;
-import java.util.function.BiFunction;
-
-import javax.net.ssl.SSLEngine;
-
 import org.conscrypt.OpenSSLProvider;
 import org.eclipse.jetty.alpn.server.ALPNServerConnection;
 import org.eclipse.jetty.io.Connection;
@@ -33,6 +26,11 @@ import org.eclipse.jetty.io.ssl.SslConnection.DecryptedEndPoint;
 import org.eclipse.jetty.io.ssl.SslHandshakeListener;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+
+import javax.net.ssl.SSLEngine;
+import java.security.Security;
+import java.util.List;
+import java.util.function.BiFunction;
 
 public class ConscryptServerALPNProcessor implements ALPNProcessor.Server
 {
@@ -60,9 +58,7 @@ public class ConscryptServerALPNProcessor implements ALPNProcessor.Server
     {
         try
         {
-            Method method = sslEngine.getClass().getMethod("setHandshakeApplicationProtocolSelector", BiFunction.class);
-            method.setAccessible(true);
-            method.invoke(sslEngine,new ALPNCallback((ALPNServerConnection)connection));
+            sslEngine.setHandshakeApplicationProtocolSelector(new ALPNCallback((ALPNServerConnection)connection));
         }
         catch (RuntimeException x)
         {
